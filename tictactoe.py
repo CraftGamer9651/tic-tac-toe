@@ -11,6 +11,7 @@ LINE_COLOR = (0,0,0)
 BG_COLOR = (255,255,255)
 X_COLOR = (255,0,0)
 O_COLOR = (0,0,255)
+FONT = pygame.font.SysFont(None, 80)
 
 #intialize screen
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
@@ -35,10 +36,36 @@ def drawGrid():
     pygame.draw.line(screen, LINE_COLOR, (200, 0), (200, 300), LINE_WIDTH)
     pygame.draw.line(screen, LINE_COLOR, (0, 100), (300, 100), LINE_WIDTH)
     pygame.draw.line(screen, LINE_COLOR, (0, 200), (300, 200), LINE_WIDTH)
-    print()
+    
+def drawMarks():
+    for row in range(ROWS):
+        for col in range(COLS):
+            if board[row][col] == "X":
+                text = FONT.render("X", True, X_COLOR)
+                screen.blit(text, (col * 100 + 25, row * 100 + 25))
+            elif board[row][col] == "O":
+                text = FONT.render("O", True, O_COLOR)
+                screen.blit(text, (col * 100 + 25, row * 100 + 25))
 
-def playerMove():
-    print()
+def checkWinner():
+    if board[0][0] == board[0][1] and board[0][1] == board[0][2]:
+        return board[0][0]
+    elif board[1][0] == board[1][1] and board[1][1] == board[1][2]:
+        return board[1][0]
+    elif board[2][0] == board[2][1] and board[2][1] == board[2][2]:
+        return board[2][0]
+    #cols
+    #diagonals
+    return None
+
+def playerMove(row, col):
+    global current_player
+    #maybe check if spot is empty
+    board[row][col] = current_player
+    if current_player == "X":
+        current_player = "O"
+    else:
+        current_player = "X"
 
 def main():
     global current_player
@@ -46,7 +73,8 @@ def main():
     screen.fill(BG_COLOR)
     drawGrid()
 
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -54,9 +82,18 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouseX, mouseY = event.pos
                 #finish this to update board
+                row = mouseY // 100
+                col = mouseX // 100
+                if board[row][col] == " ":
+                    playerMove(row, col)
+        
+        winner = checkWinner()
+        if winner != None:
+            print(winner + " wins!!")
+            running = False
         screen.fill(BG_COLOR)
         drawGrid()
-        playerMove()
+        drawMarks()
         pygame.display.update()
 
 if __name__ == "__main__":
