@@ -47,16 +47,44 @@ def drawMarks():
                 text = FONT.render("O", True, O_COLOR)
                 screen.blit(text, (col * 100 + 25, row * 100 + 25))
 
+def showEndScreen(message, color):
+    screen.fill((255, 255, 255))
+    text = FONT.render(message, True, color)
+    text_rect = text.get_rect(center = (WIDTH // 2, HEIGHT // 2))
+    screen.blit(text, text_rect)
+    pygame.display.update()
+    pygame.time.wait(2000)
+
 def checkWinner():
-    if board[0][0] == board[0][1] and board[0][1] == board[0][2]:
+    #rows
+    if board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] != " ":
         return board[0][0]
-    elif board[1][0] == board[1][1] and board[1][1] == board[1][2]:
+    elif board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] != " ":
         return board[1][0]
-    elif board[2][0] == board[2][1] and board[2][1] == board[2][2]:
+    elif board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] != " ":
         return board[2][0]
+    
     #cols
+    if board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] != " ":
+        return board[0][0]
+    elif board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] != " ":
+        return board[0][1]
+    elif board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] != " ":
+        return board[0][2]
+    
     #diagonals
+    if board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] != " ":
+        return board[0][0]
+    elif board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] != " ":
+        return board[2][0]
     return None
+
+def isBoardFull():
+    for row in board:
+        for cell in row:
+            if cell == " ":
+                return False
+    return True
 
 def playerMove(row, col):
     global current_player
@@ -87,9 +115,18 @@ def main():
                 if board[row][col] == " ":
                     playerMove(row, col)
         
+        #check winner
         winner = checkWinner()
-        if winner != None:
+        if winner is not None:
             print(winner + " wins!!")
+            running = False
+            if winner == "X":
+                showEndScreen("X wins!", X_COLOR)
+            else:
+                showEndScreen("O wins!", O_COLOR)
+        #Check if board is full
+        elif isBoardFull():
+            showEndScreen("It's a tie!", (0, 0, 0))
             running = False
         screen.fill(BG_COLOR)
         drawGrid()
