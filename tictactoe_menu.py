@@ -1,5 +1,10 @@
 import pygame
 
+'''
+Ideas:
+- Instead of coordinates to check mouse click, use rect to check mouse click
+'''
+
 #initialize  game
 pygame.init()
 
@@ -29,6 +34,8 @@ for i in range(ROWS):
 #track turns
 current_player = "X"
 
+#DRAWING FUNCRIONS
+
 #drawing screen
 def drawGrid():
     #draw 2 horizontal and 2 vertical lines at correct locations
@@ -49,8 +56,11 @@ def drawMarks():
 
 def drawButtons():
     #draw horizontal line and the "Exit" and "Reset" buttons
-    pygame.draw.rect(screen, (0, 255, 0), (25, 325, 100, 50), 5)
-    pygame.draw.rect(screen, (255, 0, 0), (175, 325, 100, 50), 5)
+    #pygame.draw.rect(screen, (r, g, b), (x, y, w, h), line thickness)
+    pygame.draw.rect(screen, (0, 255, 0), (25, 325, 100, 50))
+    pygame.draw.rect(screen, (0, 133, 0), (25, 325, 100, 50), 5)
+    pygame.draw.rect(screen, (255, 0, 0), (175, 325, 100, 50))
+    pygame.draw.rect(screen, (133, 0, 0), (175, 325, 100, 50), 5)
 
     restart_text = BUTTON_FONT.render("Restart", True, (0,0,0))
     exit_text = BUTTON_FONT.render("Exit", True, (0,0,0))
@@ -61,28 +71,76 @@ def drawButtons():
     screen.blit(restart_text, restart_rect)
     screen.blit(exit_text, exit_rect)
 
+def showEndScreen(message, color):
+    screen.fill((255, 255, 255))
+    text = FONT.render(message, True, color)
+    text_rect = text.get_rect(center = (WIDTH // 2, HEIGHT // 2))
+    screen.blit(text, text_rect)
+    pygame.display.update()
+    pygame.time.wait(2000)
+
+#BACKEND LOGIC FUNCTIONS
+
 def playerMove(row, col):
     global current_player
     #maybe check if spot is empty
-    board[row][col] = current_player
-    if current_player == "X":
-        current_player = "O"
-    else:
-        current_player = "X"
+    if board[row][col] == " ":
+        board[row][col] = current_player
+        if current_player == "X":
+            current_player = "O"
+        else:
+            current_player = "X"
 
 def resetGame():
     global board
     global current_player
     #reset current player to X
-    
+    current_player = "X"
     #reset board
+    print("Resetting game board")
+    board = []
+    for i in range(ROWS):
+        row = []
+        for j in range (COLS):
+            row.append(" ")
+        board.append(row)
 
+def quitGame():
+    #implement any extra functionality when quitting game
 
+    pygame.quit()
+    print("Quitting game...")
 
+def checkWinner():
+    #rows
+    if board[0][0] == board[0][1] and board[0][1] == board[0][2] and board[0][0] != " ":
+        return board[0][0]
+    elif board[1][0] == board[1][1] and board[1][1] == board[1][2] and board[1][0] != " ":
+        return board[1][0]
+    elif board[2][0] == board[2][1] and board[2][1] == board[2][2] and board[2][0] != " ":
+        return board[2][0]
+    
+    #cols
+    if board[0][0] == board[1][0] and board[1][0] == board[2][0] and board[0][0] != " ":
+        return board[0][0]
+    elif board[0][1] == board[1][1] and board[1][1] == board[2][1] and board[0][1] != " ":
+        return board[0][1]
+    elif board[0][2] == board[1][2] and board[1][2] == board[2][2] and board[0][2] != " ":
+        return board[0][2]
+    
+    #diagonals
+    if board[0][0] == board[1][1] and board[1][1] == board[2][2] and board[0][0] != " ":
+        return board[0][0]
+    elif board[2][0] == board[1][1] and board[1][1] == board[0][2] and board[2][0] != " ":
+        return board[2][0]
+    return None
 
-
-
-
+def isBoardFull():
+    for row in board:
+        for cell in row:
+            if cell == " ":
+                return False
+    return True
 
 def main():
     global current_player
@@ -101,9 +159,28 @@ def main():
                 if mouseY < 300:
                     row, col = mouseY // 100, mouseX // 100
                     playerMove(row,col)
-                elif mouseY > 300 and mouseY <= 400:
+                #Checks if clicking in bottom area
+                elif mouseY >= 325 and mouseY <= 375:
                     #if statement to check reset button
-                    resetGame()
+                    if mouseX >= 25 and mouseX <= 125:
+                        resetGame()
+                    elif mouseX >= 175 and mouseX <= 275:
+                        pygame.quit()
+                        return
+                    
+        winner = checkWinner()
+        if winner is not None:
+            print(winner + " wins!!")
+            if winner == "X":
+                showEndScreen("X wins!", X_COLOR)
+            else:
+                showEndScreen("O wins!", O_COLOR)
+            resetGame()
+        #Check if board is full
+        elif isBoardFull():
+            showEndScreen("It's a tie!", (0, 0, 0))
+            resetGame() 
+                    
 
         pygame.display.update()
     pygame.quit()
