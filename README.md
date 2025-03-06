@@ -1,3 +1,15 @@
+Functions:
+ - drawGrid() - Draws all the lines for the playing grid
+ - drawMarks() - Draws the "X" player and the "O" player in the grid lines
+ - drawButtons() - Draws the "Restart" and "Exit" buttons on the bottom of the screen
+ - showEndScreen() - Draws the text for who wins
+ - playerMove() - Calculates if the player is "X" or "O" and if the player's spot choice is full or empty
+ - resetGame() - Resets the game score, the position of the players, and whos turn it is
+ - quitGame() - Quits the game
+ - checkWinner() - Checks every combination to see if "X" or "O" wins
+ - isBoardFull() - Ckecks if the board is full, if so it is a tie
+ - main() - The main function
+
 MVP:
  - Multiplayer tic-tac-toe game where two players take turns clicking on the square that they want to play in
  - Not checking for winners
