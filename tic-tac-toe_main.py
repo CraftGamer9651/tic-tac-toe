@@ -1,5 +1,3 @@
-import pygame
-
 '''
 Ideas:
 - Instead of coordinates to check mouse click, use rect to check mouse click
@@ -34,7 +32,7 @@ for i in range(ROWS):
 #track turns
 current_player = "X"
 
-#DRAWING FUNCTIONS
+#DRAWING FUNCRIONS
 
 #drawing screen
 def drawGrid():
