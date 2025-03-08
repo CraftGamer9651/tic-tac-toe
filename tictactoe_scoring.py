@@ -18,6 +18,7 @@ X_COLOR = (255,0,0)
 O_COLOR = (0,0,255)
 FONT = pygame.font.Font('BurbankBigCondensed-Black.otf', 80)
 BUTTON_FONT = pygame.font.Font('BurbankBigCondensed-Black.otf', 34)
+SCORE_FONT = pygame.font.Font('BurbankBigCondensed-Black.otf', 50)
 
 #intialize screen
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
@@ -43,6 +44,8 @@ def drawGrid():
     pygame.draw.line(screen, LINE_COLOR, (200, 100), (200, 400), LINE_WIDTH)
     pygame.draw.line(screen, LINE_COLOR, (0, 200), (300, 200), LINE_WIDTH)
     pygame.draw.line(screen, LINE_COLOR, (0, 300), (300, 300), LINE_WIDTH)
+    pygame.draw.line(screen, LINE_COLOR, (0, 100), (300, 100), LINE_WIDTH)
+    pygame.draw.line(screen, LINE_COLOR, (0, 400), (300, 400), LINE_WIDTH)
 
 def drawMarks():
     for row in range(ROWS):
@@ -64,12 +67,18 @@ def drawButtons():
 
     restart_text = BUTTON_FONT.render("Restart", True, (0,0,0))
     exit_text = BUTTON_FONT.render("Exit", True, (0,0,0))
+    x_score_text = SCORE_FONT.render("X: "+str(x_score), True, X_COLOR)
+    o_score_text = SCORE_FONT.render("O: "+str(o_score), True, O_COLOR)
 
     restart_rect = restart_text.get_rect(center=(75,450))
     exit_rect = exit_text.get_rect(center=(225,450))
+    x_score_rect = x_score_text.get_rect(center=(75,50))
+    o_score_rect = o_score_text.get_rect(center=(225,50))
 
     screen.blit(restart_text, restart_rect)
     screen.blit(exit_text, exit_rect)
+    screen.blit(x_score_text, x_score_rect)
+    screen.blit(o_score_text, o_score_rect)
 
 def showEndScreen(message, color):
     screen.fill((255, 255, 255))
@@ -143,7 +152,9 @@ def isBoardFull():
     return True
 
 def main():
-    global current_player
+    global current_player, x_score, o_score
+    x_score = 0
+    o_score = 0
     running = True
     while running:
         screen.fill(BG_COLOR)
@@ -164,6 +175,8 @@ def main():
                     #if statement to check reset button
                     if mouseX >= 25 and mouseX <= 125:
                         resetGame()
+                        x_score = 0
+                        o_score = 0
                     elif mouseX >= 175 and mouseX <= 275:
                         pygame.quit()
                         return
@@ -173,8 +186,10 @@ def main():
             print(winner + " wins!!")
             if winner == "X":
                 showEndScreen("X wins!", X_COLOR)
+                x_score += 1
             else:
                 showEndScreen("O wins!", O_COLOR)
+                o_score += 1
             resetGame()
         #Check if board is full
         elif isBoardFull():
